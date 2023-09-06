@@ -19,7 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.presentation.model.CertificationType
 import com.example.presentation.theme.Padding
-import com.example.presentation.ui.theme.Typography
+import com.example.presentation.theme.Typography
 
 @Composable
 fun CertificationEditDialogBody(

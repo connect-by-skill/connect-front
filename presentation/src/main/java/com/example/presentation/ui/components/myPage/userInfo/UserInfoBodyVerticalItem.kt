@@ -10,7 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.presentation.ui.theme.Typography
+import com.example.presentation.theme.Typography
 import com.example.presentation.theme.WhaleTheme
 import com.example.presentation.theme.colors
 

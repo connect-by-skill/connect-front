@@ -16,7 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.presentation.theme.Padding
 import com.example.presentation.theme.Shapes
-import com.example.presentation.ui.theme.Typography
+import com.example.presentation.theme.Typography
 import com.example.presentation.theme.WhaleTheme
 
 @Composable

@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.presentation.theme.Padding
 import com.example.presentation.theme.WhaleTheme
-import com.example.presentation.ui.theme.Typography
+import com.example.presentation.theme.Typography
 import com.example.presentation.ui.common.textField.CustomTextField
 import com.example.presentation.viewmodel.EditListScreenViewModel
 

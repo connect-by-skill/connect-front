@@ -27,8 +27,8 @@ fun RootScreen(context: Context){
         composable(Screen.SignUp.name) {
             SignUpScreen(navController = navController)
         }
-//        composable(Screen.Main.name) {
-//            MainScreen(navController = navController)
-//        }
+        composable(Screen.Main.name) {
+            MainScreen(navController = navController)
+        }
     }
 }
