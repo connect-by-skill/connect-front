@@ -1,5 +1,6 @@
 package com.example.connectfront.di
 
+import com.example.connectfront.BuildConfig
 import com.example.data.library.api.ApiService
 import com.example.data.library.api.RecommendService
 import com.example.data.library.retrofit.NetworkRecommendFactory
@@ -59,7 +60,7 @@ class NetworkModule {
     ): Retrofit {
         return Retrofit.Builder()
             .client(okHttpClient)
-            .baseUrl(logBaseUrl(baseUrl = "http://52.78.218.145:8080/"))
+            .baseUrl(logBaseUrl(baseUrl = BuildConfig.INFO_RETROFIT_URL))
             .addConverterFactory(StringConverterFactory(gson))
             .build()
     }
@@ -73,7 +74,7 @@ class NetworkModule {
     ) : Retrofit {
         return Retrofit.Builder()
             .client(okHttpClient)
-            .baseUrl(logBaseUrl(baseUrl = "http://192.168.170.3:8888/" ))
+            .baseUrl(logBaseUrl(baseUrl = BuildConfig.RECOMMEND_RETROFIT_URL))
             .addConverterFactory(StringConverterFactory(gson))
             .build()
 
