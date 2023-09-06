@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Whale</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="sign_in_with_email">이메일로 로그인하기</string>
+    <string name="sign_up">기존 회원이 아니신가요?</string>
+    <string name="title_activity_sign_up">SignUpActivity</string>
+    <string name="sign_up_email">로그인에 사용할 이메일을 입력해주세요.</string>
+    <string name="sign_up_basic">사용자의 기본 정보를 입력해주세요.</string>
+</resources>
