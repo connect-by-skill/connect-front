@@ -10,6 +10,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.presentation.model.Screen
 import com.example.presentation.theme.colors
+import com.example.presentation.ui.components.signup.SignUpScreen
 import com.example.presentation.util.SpeechTool
 
 @Composable
@@ -23,9 +24,9 @@ fun RootScreen(context: Context){
         composable(Screen.Login.name) {
            LoginScreen(contextActivity = context, navController = navController)
         }
-//        composable(Screen.SignUp.name) {
-//            SignUpScreen(navController = navController)
-//        }
+        composable(Screen.SignUp.name) {
+            SignUpScreen(navController = navController)
+        }
 //        composable(Screen.Main.name) {
 //            MainScreen(navController = navController)
 //        }
