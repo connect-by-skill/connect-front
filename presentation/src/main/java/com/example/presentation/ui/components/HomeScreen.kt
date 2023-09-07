@@ -47,11 +47,12 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.pager.HorizontalPager
-import com.google.accompanist.pager.PagerState
+import com.example.domain.model.CompanyModel
 import com.example.domain.model.UserInfo
 import com.example.domain.model.state.RankState
 import com.example.domain.model.state.UserState
@@ -62,275 +63,330 @@ import com.example.presentation.theme.colors
 import com.example.presentation.theme.nameMedium
 import com.example.presentation.ui.common.RecruitCardItem
 import com.example.presentation.ui.common.WishItem
+import com.example.presentation.ui.components.recruit.DetailScreen
 import com.example.presentation.util.showToast
 import com.example.presentation.viewmodel.HomeViewModel
 import com.example.presentation.viewmodel.WishListViewModel
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.PagerState
 import kotlinx.coroutines.delay
 import timber.log.Timber
 
-
 val images = listOf(
-    "https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Ft1.daumcdn.net%2Fcfile%2Ftistory%2F9995B5425EA8EA761D",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6ksF7TTo_05EZphWWYu8ZRCwpAxp1IEjeqA&usqp=CAU",
-    "https://cdn.goodnews1.com/news/photo/202104/111942_36930_342.jpg",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQakuxPhhhT8b0wilYwrS8W8GAqCv97t225ZA&usqp=CAU"
+  "https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Ft1.daumcdn.net%2Fcfile%2Ftistory%2F9995B5425EA8EA761D",
+  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6ksF7TTo_05EZphWWYu8ZRCwpAxp1IEjeqA&usqp=CAU",
+  "https://cdn.goodnews1.com/news/photo/202104/111942_36930_342.jpg",
+  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQakuxPhhhT8b0wilYwrS8W8GAqCv97t225ZA&usqp=CAU"
 )
+
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun HomeScreen(navController: NavHostController){
-    val viewModel = hiltViewModel<HomeViewModel>()
-    val wishViewModel = hiltViewModel<WishListViewModel>()
-    var name by remember { mutableStateOf("")}
-    val userState by viewModel.userState.collectAsStateWithLifecycle()
-    val rankState by viewModel.rankState.collectAsStateWithLifecycle()
-    val wishState by viewModel.wishState.collectAsStateWithLifecycle()
+fun HomeScreen(navController: NavHostController) {
+  val viewModel = hiltViewModel<HomeViewModel>()
+  val wishViewModel = hiltViewModel<WishListViewModel>()
 
-    val wishList = if(wishState is WishState.Main) {
-        (wishState as WishState.Main).wishList
-    } else emptyList()
+  val homeNavController = rememberNavController()
 
-    val context = LocalContext.current
-    when(userState){
-        is UserState.Loading -> {
+  var name by remember { mutableStateOf("") }
+  val userState by viewModel.userState.collectAsStateWithLifecycle()
+  val rankState by viewModel.rankState.collectAsStateWithLifecycle()
+  val wishState by viewModel.wishState.collectAsStateWithLifecycle()
 
-        }
-        is UserState.Main -> {
-            name = UserInfo.userData?.username ?: ""
-        }
-        is UserState.Fail -> {
-            showToast(context, "유저 정보를 불러올 수 없습니다. 새로 고침 해주세요.")
-            viewModel.resetUserState()
-        }
+  val wishList = if (wishState is WishState.Main) {
+    (wishState as WishState.Main).wishList
+  } else emptyList()
+
+  val context = LocalContext.current
+  when (userState) {
+    is UserState.Loading -> {
+
     }
-    val scrollState = rememberScrollState()
-    Column(
+
+    is UserState.Main -> {
+      name = UserInfo.userData?.username ?: ""
+    }
+
+    is UserState.Fail -> {
+      showToast(context, "유저 정보를 불러올 수 없습니다. 새로 고침 해주세요.")
+      viewModel.resetUserState()
+    }
+  }
+  val scrollState = rememberScrollState()
+
+  NavHost(navController = homeNavController, startDestination = "home") {
+    composable("home") {
+      Column(
         modifier = Modifier
-            .background(MaterialTheme.colors.surface)
-            .fillMaxSize()
-    ) {
+          .background(MaterialTheme.colors.surface)
+          .fillMaxSize()
+      ) {
         Column(
-            modifier = Modifier
-                .padding(horizontal = Padding.extra)
-                .verticalScroll(scrollState)
-        ){
-            Row(
-                verticalAlignment = Alignment.Bottom,
-                modifier = Modifier.padding(bottom = Padding.extra, top = Padding.xextra)
-            ){
-                Text(
-                    text = name,
-                    style = MaterialTheme.typography.nameMedium
-                )
-                Text(
-                    text = "님 안녕하세요?",
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
-            AutoSlidingCarousel(
-                itemsCount = images.size,
-                itemContent = { index ->
-                    AsyncImage(
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data(images[index])
-                            .build(),
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .height(200.dp)
-                            .clickable {
-                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(images[index]))
-                                context.startActivity(intent)
-                            }
-                    )
-                }
-            )
-            Spacer(modifier = Modifier.size(12.dp))
+          modifier = Modifier
+            .padding(horizontal = Padding.extra)
+            .verticalScroll(scrollState)
+        ) {
+          Row(
+            verticalAlignment = Alignment.Bottom,
+            modifier = Modifier.padding(bottom = Padding.extra, top = Padding.xextra)
+          ) {
             Text(
-                text = "인기 채용 정보",
-                style = MaterialTheme.typography.nameMedium
+              text = name,
+              style = MaterialTheme.typography.nameMedium
             )
-            Spacer(modifier = Modifier.size(12.dp))
-            when(rankState){
-                is RankState.Loading -> {
-                    Timber.d("MoviesScreen: Loading")
-                    Box (
-                        modifier = Modifier
-                            .height(180.dp)
-                            .fillMaxWidth()
-                            ) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.align(Alignment.Center)
-                        )
-                    }
-                }
-                is RankState.Main -> {
-                    Timber.d("MoviesScreen: Success")
-                    LazyRow(
-                        horizontalArrangement = Arrangement.spacedBy(Padding.large),
-                        contentPadding = PaddingValues(
-                            start = Padding.small,
-                            end = Padding.small
-                        )
-                    ){
-                        itemsIndexed((viewModel.rankState.value as RankState.Main).rankList) { index, item ->
-                            RecruitCardItem(rank = index+1, company = item.companyName, occupation = item.recruitmentType)
-                        }
-                    }
-
-                }
-                is RankState.Failed -> {
-                    Timber.d("MoviesScreen: Error")
-                }
-            }
-
-            Spacer(modifier = Modifier.size(12.dp))
             Text(
-                text = "관심을 표한 회사에요",
-                style = MaterialTheme.typography.nameMedium
+              text = "님 안녕하세요?",
+              style = MaterialTheme.typography.bodyMedium
             )
-            Spacer(modifier = Modifier.size(12.dp))
-            Card(
-                elevation = CardDefaults.cardElevation(5.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colors.surface),
+          }
+          AutoSlidingCarousel(
+            itemsCount = images.size,
+            itemContent = { index ->
+              AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                  .data(images[index])
+                  .build(),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .border(
-                        0.5.dp,
-                        MaterialTheme.colors.textFiledBackgroundVariant,
-                        MaterialTheme.shapes.medium
-                    )
-            ){
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier
-                        .padding(Padding.large)
-                        .clickable {
-                            navController.navigate(MainMenu.WishList.name) {
-                                popUpTo(MainMenu.Home.name) { inclusive = true }
-                            }
-                        }
-                ) {
-                    WishItem(MaterialTheme.colors.background,
-                        if(wishList.isNotEmpty()) wishList[0].companyName else null,
-                        if(wishList.isNotEmpty()) wishList[0].recruitmentType else null,
-                        if(wishList.isNotEmpty()) wishList[0].dDay else null,
-                        if(wishList.isNotEmpty()) wishList[0] else null,
-                        if(wishList.isNotEmpty()) wishViewModel else null,
-                        isHome = true
-                        )
-                    Spacer(modifier = Modifier.size(Padding.large))
-                    WishItem(MaterialTheme.colors.secondary,
-                        if(wishList.size>1) wishList[1].companyName else null,
-                        if(wishList.size>1) wishList[1].recruitmentType else null,
-                        if(wishList.size>1) wishList[1].dDay else null,
-                        if(wishList.size>1) wishList[1] else null,
-                        if(wishList.size>1) wishViewModel else null,
-                        isHome = true
-                    )
+                  .height(200.dp)
+                  .clickable {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(images[index]))
+                    context.startActivity(intent)
+                  }
+              )
+            }
+          )
+          Spacer(modifier = Modifier.size(12.dp))
+          Text(
+            text = "인기 채용 정보",
+            style = MaterialTheme.typography.nameMedium
+          )
+          Spacer(modifier = Modifier.size(12.dp))
+          when (rankState) {
+            is RankState.Loading -> {
+              Timber.d("MoviesScreen: Loading")
+              Box(
+                modifier = Modifier
+                  .height(180.dp)
+                  .fillMaxWidth()
+              ) {
+                CircularProgressIndicator(
+                  modifier = Modifier.align(Alignment.Center)
+                )
+              }
+            }
 
-
-                    Spacer(modifier = Modifier.size(Padding.large))
-                    WishItem(MaterialTheme.colors.background,
-                        if(wishList.size>2) wishList[2].companyName else null,
-                        if(wishList.size>2) wishList[2].recruitmentType else null,
-                        if(wishList.size>2) wishList[2].dDay else null,
-                        if(wishList.size>2) wishList[2] else null,
-                        if(wishList.size>2) wishViewModel else null,
-                        isHome = true
-                    )
+            is RankState.Main -> {
+              Timber.d("MoviesScreen: Success")
+              LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(Padding.large),
+                contentPadding = PaddingValues(
+                  start = Padding.small,
+                  end = Padding.small
+                )
+              ) {
+                itemsIndexed((viewModel.rankState.value as RankState.Main).rankList) { index, item ->
+                  RecruitCardItem(
+                    rank = index + 1,
+                    company = item.companyName,
+                    occupation = item.recruitmentType,
+                    onClick = {
+                      homeNavController.currentBackStackEntry?.savedStateHandle?.set(
+                        key = "companyModel",
+                        value = item
+                      )
+                      homeNavController.navigate("detail")
+                    })
                 }
-
+              }
 
             }
-        }
-    }
-}
 
+            is RankState.Failed -> {
+              Timber.d("MoviesScreen: Error")
+            }
+          }
+
+          Spacer(modifier = Modifier.size(12.dp))
+          Text(
+            text = "관심을 표한 회사에요",
+            style = MaterialTheme.typography.nameMedium
+          )
+          Spacer(modifier = Modifier.size(12.dp))
+          Card(
+            elevation = CardDefaults.cardElevation(5.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colors.surface),
+            modifier = Modifier
+              .fillMaxWidth()
+              .border(
+                0.5.dp,
+                MaterialTheme.colors.textFiledBackgroundVariant,
+                MaterialTheme.shapes.medium
+              )
+          ) {
+            Column(
+              horizontalAlignment = Alignment.CenterHorizontally,
+              modifier = Modifier
+                .padding(Padding.large)
+                .clickable {
+                  navController.navigate(MainMenu.WishList.name) {
+                    popUpTo(MainMenu.Home.name) { inclusive = true }
+                  }
+                }
+            ) {
+              WishItem(
+                MaterialTheme.colors.background,
+                if (wishList.isNotEmpty()) wishList[0].companyName else null,
+                if (wishList.isNotEmpty()) wishList[0].recruitmentType else null,
+                if (wishList.isNotEmpty()) wishList[0].dDay else null,
+                if (wishList.isNotEmpty()) wishList[0] else null,
+                if (wishList.isNotEmpty()) wishViewModel else null,
+                isHome = true
+              )
+              Spacer(modifier = Modifier.size(Padding.large))
+              WishItem(
+                MaterialTheme.colors.secondary,
+                if (wishList.size > 1) wishList[1].companyName else null,
+                if (wishList.size > 1) wishList[1].recruitmentType else null,
+                if (wishList.size > 1) wishList[1].dDay else null,
+                if (wishList.size > 1) wishList[1] else null,
+                if (wishList.size > 1) wishViewModel else null,
+                isHome = true
+              )
+
+
+              Spacer(modifier = Modifier.size(Padding.large))
+              WishItem(
+                MaterialTheme.colors.background,
+                if (wishList.size > 2) wishList[2].companyName else null,
+                if (wishList.size > 2) wishList[2].recruitmentType else null,
+                if (wishList.size > 2) wishList[2].dDay else null,
+                if (wishList.size > 2) wishList[2] else null,
+                if (wishList.size > 2) wishViewModel else null,
+                isHome = true
+              )
+            }
+
+
+          }
+        }
+      }
+    }
+    composable("detail") {
+      val companyModel =
+        homeNavController.previousBackStackEntry?.savedStateHandle?.get<CompanyModel>("companyModel")
+          ?: CompanyModel(
+            id = 0,
+            applicationDate = "",
+            recruitmentPeriod = "",
+            companyName = "",
+            recruitmentType = "",
+            typeOfEmployment = "",
+            formOfWages = "",
+            wage = "",
+            entryForm = "",
+            requiredExperience = "",
+            requiredEducation = "",
+            majorField = "",
+            requiredCredentials = "",
+            businessAddress = "",
+            companyType = "",
+            responsibleAgency = "",
+            contactNumber = "",
+            countOfMemberWish = 0,
+            registrationDate = "",
+            addedWishlist = false
+          )
+      DetailScreen(companyModel, homeNavController)
+    }
+  }
+}
 
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun AutoSlidingCarousel(
-    modifier: Modifier = Modifier,
-    autoSlideDuration: Long = 2000,
-    pagerState: PagerState = remember { PagerState() },
-    itemsCount: Int,
-    itemContent: @Composable (index: Int) -> Unit,
+  modifier: Modifier = Modifier,
+  autoSlideDuration: Long = 2000,
+  pagerState: PagerState = remember { PagerState() },
+  itemsCount: Int,
+  itemContent: @Composable (index: Int) -> Unit,
 ) {
-    val isDragged by pagerState.interactionSource.collectIsDraggedAsState()
+  val isDragged by pagerState.interactionSource.collectIsDraggedAsState()
 
-    LaunchedEffect(pagerState.currentPage) {
-        delay(autoSlideDuration)
-        pagerState.animateScrollToPage((pagerState.currentPage + 1) % itemsCount)
+  LaunchedEffect(pagerState.currentPage) {
+    delay(autoSlideDuration)
+    pagerState.animateScrollToPage((pagerState.currentPage + 1) % itemsCount)
+  }
+
+  Box(
+    modifier = modifier.fillMaxWidth(),
+  ) {
+    HorizontalPager(count = itemsCount, state = pagerState, modifier = Modifier.clickable {
+
+    }) { page ->
+      itemContent(page)
     }
 
-    Box(
-        modifier = modifier.fillMaxWidth(),
+    // you can remove the surface in case you don't want
+    // the transparant bacground
+    Surface(
+      modifier = Modifier
+        .padding(bottom = 8.dp)
+        .align(Alignment.BottomCenter),
+      shape = CircleShape,
+      color = Color.Black.copy(alpha = 0.5f)
     ) {
-        HorizontalPager(count = itemsCount, state = pagerState, modifier = Modifier.clickable {
-
-        }) { page ->
-            itemContent(page)
-        }
-
-        // you can remove the surface in case you don't want
-        // the transparant bacground
-        Surface(
-            modifier = Modifier
-                .padding(bottom = 8.dp)
-                .align(Alignment.BottomCenter),
-            shape = CircleShape,
-            color = Color.Black.copy(alpha = 0.5f)
-        ) {
-            DotsIndicator(
-                modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp),
-                totalDots = itemsCount,
-                selectedIndex = if (isDragged) pagerState.currentPage else pagerState.targetPage,
-                dotSize = 8.dp
-            )
-        }
+      DotsIndicator(
+        modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp),
+        totalDots = itemsCount,
+        selectedIndex = if (isDragged) pagerState.currentPage else pagerState.targetPage,
+        dotSize = 8.dp
+      )
     }
+  }
 }
 
 @Composable
 fun DotsIndicator(
-    modifier: Modifier = Modifier,
-    totalDots: Int,
-    selectedIndex: Int,
-    selectedColor: Color = MaterialTheme.colors.primary,
-    unSelectedColor: Color = MaterialTheme.colors.surface,
-    dotSize: Dp
+  modifier: Modifier = Modifier,
+  totalDots: Int,
+  selectedIndex: Int,
+  selectedColor: Color = MaterialTheme.colors.primary,
+  unSelectedColor: Color = MaterialTheme.colors.surface,
+  dotSize: Dp
 ) {
-    LazyRow(
-        modifier = modifier
-            .wrapContentWidth()
-            .wrapContentHeight()
-    ) {
-        items(totalDots) { index ->
-            IndicatorDot(
-                color = if (index == selectedIndex) selectedColor else unSelectedColor,
-                size = dotSize
-            )
+  LazyRow(
+    modifier = modifier
+      .wrapContentWidth()
+      .wrapContentHeight()
+  ) {
+    items(totalDots) { index ->
+      IndicatorDot(
+        color = if (index == selectedIndex) selectedColor else unSelectedColor,
+        size = dotSize
+      )
 
-            if (index != totalDots - 1) {
-                Spacer(modifier = Modifier.padding(horizontal = 2.dp))
-            }
-        }
+      if (index != totalDots - 1) {
+        Spacer(modifier = Modifier.padding(horizontal = 2.dp))
+      }
     }
+  }
 }
 
 @Composable
 fun IndicatorDot(
-    modifier: Modifier = Modifier,
-    size: Dp,
-    color: Color
+  modifier: Modifier = Modifier,
+  size: Dp,
+  color: Color
 ) {
-    Box(
-        modifier = modifier
-            .size(size)
-            .clip(CircleShape)
-            .background(color)
-    )
+  Box(
+    modifier = modifier
+      .size(size)
+      .clip(CircleShape)
+      .background(color)
+  )
 }
 
 

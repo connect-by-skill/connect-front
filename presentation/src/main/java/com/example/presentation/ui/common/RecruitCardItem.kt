@@ -1,6 +1,7 @@
 package com.example.presentation.ui.common
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -32,14 +33,15 @@ import com.example.presentation.theme.nameMedium
 fun RecruitCardItem(
     rank: Int,
     image: String?=null,
+    onClick: (() -> Unit),
     company: String,
     occupation: String
 ) {
     Card(
         modifier = Modifier
             .width(145.dp)
-            .height(190.dp),
-        elevation = CardDefaults.cardElevation(5.dp)
+            .height(190.dp).clickable { onClick() },
+        elevation = CardDefaults.cardElevation(5.dp),
     ){
         Column(
             modifier = Modifier
@@ -86,7 +88,8 @@ fun RecruitCardItemPreview() {
         RecruitCardItem(
             rank = 1,
             company = "금오컴퍼니",
-            occupation = "영업직"
+            occupation = "영업직",
+            onClick = {}
         )
     }
 }

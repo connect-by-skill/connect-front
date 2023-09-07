@@ -31,7 +31,7 @@ fun RecruitHeader(
     modifier = modifier
       .height(ButtonDefaults.MinHeight), verticalAlignment = Alignment.CenterVertically
   ) {
-    Text(text = "전체 ${totalCount}개")
+    Text(text = "전체 ${1732}개")
     Spacer(modifier = Modifier.weight(1f))
     CustomTextDropdownMenu(
       controller = filterDropdownMenuController,

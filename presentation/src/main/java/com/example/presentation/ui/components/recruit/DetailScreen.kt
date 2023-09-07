@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
@@ -23,10 +25,11 @@ import com.example.presentation.viewmodel.DetailViewModel
 
 @Composable
 fun DetailScreen(companyModel: CompanyModel, navController: NavHostController, isRecruit: Boolean = true, isDetail: MutableState<Boolean>?=null) {
+  val scrollState = rememberScrollState()
   val viewModel = hiltViewModel<DetailViewModel>()
   viewModel.init(navController)
   Surface(color = MaterialTheme.colors.background, modifier = Modifier.fillMaxHeight()) {
-    Column {
+    Column(modifier = Modifier.verticalScroll(state = scrollState)) {
       IconButton(onClick = {
         if(isRecruit) viewModel.navigatePop() else {isDetail?.value = false}
       }) {

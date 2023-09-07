@@ -124,7 +124,7 @@ fun RecommendItem(
           )
           Spacer(modifier = Modifier.size(6.dp))
           Text(
-            text = if(score >= 6.0) "높은 확률로 합격할 수 있어요!" else if(score == 0.0) "다른 사람들이 찜했어요!" else "도전 해볼만 해요!",
+            text = if(score >= 6.0) "높은 확률로 합격할 수 있어요!" else if(score == 0.0) "나와 비슷한 역량의 사람들이 지원했어요!" else "도전 해볼만 해요!",
             style = MaterialTheme.typography.bodyMedium
           )
         }

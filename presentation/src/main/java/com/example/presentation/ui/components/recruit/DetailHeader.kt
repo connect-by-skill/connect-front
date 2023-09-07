@@ -43,7 +43,7 @@ fun DetailHeader(recruitModel: RecruitModel, onWishChange: () -> Unit) {
     modifier = Modifier
       .fillMaxWidth()
       .background(color = MaterialTheme.colors.background)
-      .padding(Padding.large),
+      .padding(vertical = Padding.medium, horizontal = Padding.extra),
     verticalAlignment = Alignment.Top,
     horizontalArrangement = Arrangement.spacedBy(Padding.medium),
   ) {
