@@ -7,10 +7,10 @@ import com.example.domain.repository.RecommendRepository
 import javax.inject.Inject
 
 class RecommendUseCase @Inject constructor(private val recommendRepository: RecommendRepository){
-    fun getRecommendList() : List<RecommendItemData> {
-        return recommendRepository.getRecommendList()
+    suspend fun getRecommendList(id: String) : EntityWrapper<List<RecommendItemData>> {
+        return recommendRepository.getRecommendList(id)
     }
-    suspend fun getWishListBaseRecommend(id: String) : EntityWrapper<List<CompanyModel>> {
+    suspend fun getWishListBaseRecommend(id: String) : EntityWrapper<List<RecommendItemData>> {
         return recommendRepository.getWishListBaseRecommend(id)
     }
 }

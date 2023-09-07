@@ -32,100 +32,105 @@ import com.example.presentation.viewmodel.RecommendViewModel
 
 @Composable
 fun RecommendItem(
-    color : Color,
-    id : Int,
-    company: String,
-    occupation: String,
-    recommendReason: List<String>,
-    score: Double,
-    isWished: Boolean = false,
-    viewModel: RecommendViewModel
+  color: Color,
+  id: Int,
+  company: String,
+  occupation: String,
+  recommendReason: List<String>,
+  score: Double,
+  isWished: Boolean = false,
+  viewModel: RecommendViewModel
 ) {
-    Card(
-        colors = CardDefaults.cardColors(color),
-        elevation = CardDefaults.cardElevation(5.dp),
+  Card(
+    colors = CardDefaults.cardColors(color),
+    elevation = CardDefaults.cardElevation(5.dp),
+  ) {
+    Column(
+      modifier = Modifier
+          .padding(Padding.medium)
+          .fillMaxSize()
+    ) {
+      Row(
+        verticalAlignment = Alignment.CenterVertically
+      ) {
+        Column() {
+          Text(
+            text = company,
+            style = MaterialTheme.typography.headlineSmall
+          )
+          Text(
+            text = occupation,
+            style = MaterialTheme.typography.bodyMedium
+          )
+        }
+        Spacer(modifier = Modifier.weight(1f))
+        IconButton(
+          onClick = { viewModel.changeWishStatus(isWished, id) }
+        ) {
+          Icon(
+            painter = if (isWished) painterResource(id = R.drawable.clober) else painterResource(id = R.drawable.selected_clover),
+            contentDescription = "찜하기",
+            tint = MaterialTheme.colors.surface
+          )
+        }
+      }
+      Spacer(modifier = Modifier.size(24.dp))
+      Box(
         modifier = Modifier
-            .width(320.dp)
-            .height(340.dp)
-    ){
-        Column(
-            modifier = Modifier
-                .padding(Padding.medium)
-                .fillMaxSize()
-        ){
+            .background(
+                MaterialTheme.colors.surface,
+                shape = RoundedCornerShape(topStartPercent = 6, topEndPercent = 6)
+            )
+            .fillMaxWidth()
+            .padding(Padding.medium)
+      ) {
+        Column {
+          recommendReason.forEach { item ->
             Row(
-                verticalAlignment = Alignment.CenterVertically
-            ){
-                Column(){
-                    Text(
-                       text = company,
-                        style = MaterialTheme.typography.headlineSmall
-                    )
-                    Text(
-                        text = occupation,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
-                Spacer(modifier = Modifier.weight(1f))
-                IconButton(
-                    onClick = {viewModel.changeWishStatus(isWished, id)}
-                ){
-                    Icon(
-                        painter = if(isWished) painterResource(id = R.drawable.clober) else painterResource(id = R.drawable.selected_clover),
-                        contentDescription = "찜하기",
-                        tint = MaterialTheme.colors.surface
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.size(24.dp))
-            Box(
-                modifier = Modifier
-                    .background(
-                        MaterialTheme.colors.surface,
-                        shape = RoundedCornerShape(topStartPercent = 6, topEndPercent = 6)
-                    )
-                    .height(200.dp)
-                    .fillMaxWidth()
-                    .padding(Padding.medium)
+              verticalAlignment = Alignment.CenterVertically
             ) {
-                Column() {
-                    recommendReason.forEach { item ->
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.thumb_up),
-                                contentDescription = "추천",
-                                tint = MaterialTheme.colors.primary,
-                                modifier = Modifier.size(18.dp),
-                            )
-                            }
-                            Spacer(modifier = Modifier.size(6.dp))
-                            Text(
-                                text = item,
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                        }
-                    }
-                }
+              Icon(
+                painter = painterResource(id = R.drawable.thumb_up),
+                contentDescription = "추천",
+                tint = MaterialTheme.colors.primary,
+                modifier = Modifier.size(24.dp),
+              )
+              Spacer(modifier = Modifier.size(6.dp))
+              Text(
+                text = item,
+                style = MaterialTheme.typography.bodyMedium
+              )
             }
-            Spacer(modifier =  Modifier.size(6.dp))
-            Box(
-                modifier = Modifier
-                    .background(
-                        MaterialTheme.colors.surface,
-                        shape = RoundedCornerShape(bottomStartPercent = 12, bottomEndPercent = 12)
-                    )
-                    .height(40.dp)
-                    .fillMaxWidth()
-                    .padding(Padding.medium)
-            ) {
-                Text(
-                    text = "추천 점수 : ${score}",
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
-        }   
+          }
+        }
+      }
+      Spacer(modifier = Modifier.size(6.dp))
+      Box(
+        modifier = Modifier
+            .background(
+                MaterialTheme.colors.surface,
+                shape = RoundedCornerShape(bottomStartPercent = 12, bottomEndPercent = 12)
+            )
+            .height(40.dp)
+            .fillMaxWidth()
+            .padding(Padding.medium)
+      ) {
+        Row {
+          Icon(
+            painter = painterResource(id = if(score >= 6.0) R.drawable.happy else R.drawable.happiness),
+            contentDescription = "추천",
+            tint = MaterialTheme.colors.primary,
+            modifier = Modifier.size(24.dp),
+          )
+          Spacer(modifier = Modifier.size(6.dp))
+          Text(
+            text = if(score >= 6.0) "높은 확률로 합격할 수 있어요!" else if(score == 0.0) "다른 사람들이 찜했어요!" else "도전 해볼만 해요!",
+            style = MaterialTheme.typography.bodyMedium
+          )
+        }
+      }
+    }
+  }
 }
 
 

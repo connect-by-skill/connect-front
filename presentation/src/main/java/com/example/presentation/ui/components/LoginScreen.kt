@@ -113,7 +113,7 @@ fun LoginScreen(
     ) {
       Image(
         modifier = Modifier
-          .fillMaxWidth(0.35f)
+          .fillMaxSize(0.35f)
           .clickable(enabled = !isLock) {
             if (doubleClick!!) {
               SpeechTool.isSupported = !SpeechTool.isSupported

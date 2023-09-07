@@ -1,7 +1,7 @@
 package com.example.presentation.viewmodel
 
-import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.EntityWrapper
@@ -23,12 +23,20 @@ class RecommendViewModel @Inject constructor(private val recommendUseCase: Recom
         WishRecommendState.Loading)
     val wishListBaseRecommendState : StateFlow<WishRecommendState> = _wishListBaseRecommendState
 
+    val isResume = mutableStateOf(true)
+
     init {
         getRecommendList()
     }
 
-    private fun getRecommendList() {
-        recommendList.addAll(recommendUseCase.getRecommendList())
+    fun getRecommendList() {
+        viewModelScope.launch {
+            val result = recommendUseCase.getRecommendList(UserInfo.userData?.email ?:"")
+            if(result is EntityWrapper.Success) {
+                recommendList.clear()
+                recommendList.addAll(result.entity)
+            }
+        }
     }
 
     fun changeWishStatus(isWish: Boolean, id: Int){
@@ -46,7 +54,8 @@ class RecommendViewModel @Inject constructor(private val recommendUseCase: Recom
             _wishListBaseRecommendState.value = WishRecommendState.Loading
             val result = recommendUseCase.getWishListBaseRecommend(UserInfo.userData?.email ?:"")
             if(result is EntityWrapper.Success){
-                Log.d("테스트", result.entity.toString())
+                recommendList.clear()
+                recommendList.addAll(result.entity)
             }
         }
     }

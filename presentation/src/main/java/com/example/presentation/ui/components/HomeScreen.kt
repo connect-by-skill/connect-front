@@ -115,7 +115,7 @@ fun HomeScreen(navController: NavHostController){
         ){
             Row(
                 verticalAlignment = Alignment.Bottom,
-                modifier = Modifier.padding(vertical = Padding.extra)
+                modifier = Modifier.padding(bottom = Padding.extra, top = Padding.xextra)
             ){
                 Text(
                     text = name,

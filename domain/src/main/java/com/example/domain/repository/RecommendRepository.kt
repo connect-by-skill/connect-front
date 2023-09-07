@@ -5,7 +5,7 @@ import com.example.domain.model.CompanyModel
 import com.example.domain.model.RecommendItemData
 
 interface RecommendRepository {
-    fun getRecommendList() : List<RecommendItemData>
+    suspend fun getRecommendList(id: String): EntityWrapper<List<RecommendItemData>>
 
-    suspend fun getWishListBaseRecommend(id: String) : EntityWrapper<List<CompanyModel>>
+    suspend fun getWishListBaseRecommend(id: String) : EntityWrapper<List<RecommendItemData>>
 }

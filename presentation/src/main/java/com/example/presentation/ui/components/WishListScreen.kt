@@ -10,7 +10,9 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -57,105 +59,125 @@ import kotlinx.datetime.LocalDate
 
 @Composable
 fun WishListScreen(viewModel: WishListViewModel) {
-    val isCalendar = remember { mutableStateOf(false)}
-    val isDetail = remember { mutableStateOf(false) }
-    val isChanged by viewModel.isChanged.collectAsStateWithLifecycle()
-    val wishListState by viewModel.wishState.collectAsStateWithLifecycle()
-    if(isCalendar.value){
-        WishListForCalendar(isCalendar, viewModel, wishListState)
-    } else {
-        WishListForListScreen(isCalendar, viewModel, wishListState, isChanged, isDetail)
-    }
+  val isCalendar = remember { mutableStateOf(false) }
+  val isDetail = remember { mutableStateOf(false) }
+  val isChanged by viewModel.isChanged.collectAsStateWithLifecycle()
+  val wishListState by viewModel.wishState.collectAsStateWithLifecycle()
+  if (isCalendar.value) {
+    WishListForCalendar(isCalendar, viewModel, wishListState)
+  } else {
+    WishListForListScreen(isCalendar, viewModel, wishListState, isChanged, isDetail)
+  }
 }
 
 @Composable
 fun WishListForListScreen(
-    isCalendar : MutableState<Boolean>,
-    viewModel : WishListViewModel,
-    wishListState : WishState,
-    isChanged: Boolean,
-    isDetail: MutableState<Boolean>
+  isCalendar: MutableState<Boolean>,
+  viewModel: WishListViewModel,
+  wishListState: WishState,
+  isChanged: Boolean,
+  isDetail: MutableState<Boolean>
 ) {
-    val company = remember { mutableStateOf(
-        CompanyModel(
-            id = 0,
-            applicationDate = "",
-            recruitmentPeriod = "",
-            companyName = "",
-            recruitmentType = "",
-            typeOfEmployment = "",
-            formOfWages = "",
-            wage = "",
-            entryForm = "",
-            requiredExperience = "",
-            requiredEducation = "",
-            majorField = "",
-            requiredCredentials = "",
-            businessAddress = "",
-            companyType = "",
-            responsibleAgency = "",
-            contactNumber = "",
-            countOfMemberWish = 0,
-            registrationDate = "",
-            addedWishlist = false
-        )
-    ) }
-    if(!isDetail.value){
-        Column(
-            modifier = Modifier
-                .background(MaterialTheme.colors.surface)
-                .fillMaxSize()
-                .padding(Padding.large)
-        ){
-            Text(
-                text = "위시리스트",
-                style = MaterialTheme.typography.headlineSmall
+  val company = remember {
+    mutableStateOf(
+      CompanyModel(
+        id = 0,
+        applicationDate = "",
+        recruitmentPeriod = "",
+        companyName = "",
+        recruitmentType = "",
+        typeOfEmployment = "",
+        formOfWages = "",
+        wage = "",
+        entryForm = "",
+        requiredExperience = "",
+        requiredEducation = "",
+        majorField = "",
+        requiredCredentials = "",
+        businessAddress = "",
+        companyType = "",
+        responsibleAgency = "",
+        contactNumber = "",
+        countOfMemberWish = 0,
+        registrationDate = "",
+        addedWishlist = false
+      )
+    )
+  }
+  if (!isDetail.value) {
+    Column(
+      modifier = Modifier
+        .background(MaterialTheme.colors.surface)
+        .fillMaxSize()
+        .padding(Padding.extra)
+    ) {
+      Text(
+        text = "위시리스트",
+        style = MaterialTheme.typography.headlineSmall
+      )
+      Spacer(modifier = Modifier.size(Padding.large))
+      when (wishListState) {
+        is WishState.Loading -> {
+          Box(
+            modifier = Modifier.fillMaxSize()
+          ) {
+            CircularProgressIndicator(
+              modifier = Modifier.align(Alignment.Center)
             )
-            Spacer(modifier = Modifier.size(Padding.large))
-            when(wishListState){
-                is WishState.Loading -> {
-                    Box (
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.align(Alignment.Center)
-                        )
-                    }
-                }
-                is WishState.Main -> {
-                    LazyColumn(
-                        contentPadding = PaddingValues(vertical = 10.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        itemsIndexed(wishListState.wishList) { index, item ->
-                            WishItem(color = if(index%2==0) MaterialTheme.colors.background else MaterialTheme.colors.secondary, company = item.companyName, occupation = item.recruitmentType, dDay = item.dDay, item = item, viewModel = viewModel, isDetail = isDetail, detailInfo  = company)
-                        }
-                    }
-                }
-                is WishState.Failed -> {
-
-                }
-            }
-            Spacer(modifier = Modifier.weight(1f))
-            Row {
-                Spacer(modifier = Modifier.weight(1f))
-                FloatingActionButton(
-                    onClick = { isCalendar.value = true },
-                    shape = CircleShape,
-                    containerColor = MaterialTheme.colors.primary,
-                    contentColor = MaterialTheme.colors.surface,
-                    elevation = FloatingActionButtonDefaults.elevation(10.dp),
-                    modifier = Modifier
-                        .size(70.dp),
-                ) {
-                    Image(painter = painterResource(id = R.drawable.calendar), contentDescription = "달력", modifier = Modifier.fillMaxSize(0.7f))
-                }
-            }
+          }
         }
-    } else {
-        DetailScreen(companyModel = company.value, navController = rememberNavController(), isDetail = isDetail, isRecruit = false)
-    }
 
+        is WishState.Main -> {
+          LazyColumn(
+            contentPadding = PaddingValues(vertical = 10.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+          ) {
+            itemsIndexed(wishListState.wishList) { index, item ->
+              WishItem(
+                color = if (index % 2 == 0) MaterialTheme.colors.background else MaterialTheme.colors.secondary,
+                company = item.companyName,
+                occupation = item.recruitmentType,
+                dDay = item.dDay,
+                item = item,
+                viewModel = viewModel,
+                isDetail = isDetail,
+                detailInfo = company
+              )
+            }
+          }
+        }
+
+        is WishState.Failed -> {
+
+        }
+      }
+    }
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomEnd) {
+      FloatingActionButton(
+        onClick = { isCalendar.value = true },
+        shape = CircleShape,
+        containerColor = MaterialTheme.colors.primary,
+        contentColor = MaterialTheme.colors.surface,
+        elevation = FloatingActionButtonDefaults.elevation(10.dp),
+        modifier = Modifier
+          .size(70.dp)
+          .offset(x = (-10).dp, y = (-10).dp),
+      ) {
+        Image(
+          painter = painterResource(id = R.drawable.calendar),
+          contentDescription = "달력",
+          modifier = Modifier.fillMaxSize(0.7f)
+        )
+      }
+    }
+  } else {
+    DetailScreen(
+      companyModel = company.value,
+      navController = rememberNavController(),
+      isDetail = isDetail,
+      isRecruit = false
+    )
+  }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -165,111 +187,119 @@ fun WishListForCalendar(
   viewModel: WishListViewModel,
   wishListState: WishState
 ) {
-    val list = mutableListOf<KalendarColor>()
-    for(i in 1..12){
-        list.add(
-            KalendarColor(
-            backgroundColor = MaterialTheme.colors.surface,
-            dayBackgroundColor = MaterialTheme.colors.surface,
-            headerTextColor = MaterialTheme.colors.primary
-        )
-        )
-    }
-    Column(
-        modifier = Modifier
-            .background(MaterialTheme.colors.surface)
-            .fillMaxSize()
-            .padding(Padding.large)
-    ) {
-        Kalendar(
-            currentDay = null,
-            kalendarType = KalendarType.Firey,
-            modifier = Modifier.wrapContentHeight(),
-            showLabel = true,
-            events = KalendarEvents(viewModel.eventList),
-            kalendarHeaderTextKonfig = KalendarTextKonfig(MaterialTheme.colors.primary, 32.sp),
-            kalendarColors = KalendarColors(list),
-            daySelectionMode = DaySelectionMode.Single,
-            dayContent = { date ->
-                Column(
-                    modifier = Modifier.height(70.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Spacer(modifier = Modifier.size(12.dp))
-                    Text(
-                        text = date.dayOfMonth.toString(),
-                        style = MaterialTheme.typography.bodyLarge,
-                        textAlign = TextAlign.Center,
-                        modifier = if(date.compareTo(LocalDate(java.time.LocalDate.now().year,java.time.LocalDate.now().month, java.time.LocalDate.now().dayOfMonth))==0 ) Modifier
-                            .size(36.dp)
-                            .background(MaterialTheme.colors.background, shape = CircleShape) else Modifier
-                    )
-                    Spacer(modifier = Modifier.size(4.dp))
-                    if(wishListState is WishState.Main){
-                        wishListState.wishList.forEach {
-                                item ->
-                            if(item.recruitmentPeriod == date.toString()){
-                                Text(
-                                    text = item.companyName,
-                                    modifier = Modifier.background(MaterialTheme.colors.secondary),
-                                    style = MaterialTheme.typography.labelSmall
-                                )
-                                Spacer(modifier = Modifier.size(6.dp))
-                            }
-                        }
-                    }
-                }
-
-            },
-            headerContent = null,
-            onDayClick = { selectedDay, events ->
-                // Handle day click event
-            },
-            onRangeSelected = { selectedRange, events ->
-                // Handle range selection event
-            },
-            onErrorRangeSelected = { error ->
-                // Handle error
+  val list = mutableListOf<KalendarColor>()
+  for (i in 1..12) {
+    list.add(
+      KalendarColor(
+        backgroundColor = MaterialTheme.colors.surface,
+        dayBackgroundColor = MaterialTheme.colors.surface,
+        headerTextColor = MaterialTheme.colors.primary
+      )
+    )
+  }
+  Column(
+    modifier = Modifier
+      .background(MaterialTheme.colors.surface)
+      .fillMaxSize()
+      .padding(Padding.large)
+  ) {
+    Kalendar(
+      currentDay = null,
+      kalendarType = KalendarType.Firey,
+      modifier = Modifier.wrapContentHeight(),
+      showLabel = true,
+      events = KalendarEvents(viewModel.eventList),
+      kalendarHeaderTextKonfig = KalendarTextKonfig(MaterialTheme.colors.primary, 32.sp),
+      kalendarColors = KalendarColors(list),
+      daySelectionMode = DaySelectionMode.Single,
+      dayContent = { date ->
+        Column(
+          modifier = Modifier.height(70.dp),
+          horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+          Spacer(modifier = Modifier.size(12.dp))
+          Text(
+            text = date.dayOfMonth.toString(),
+            style = MaterialTheme.typography.bodyLarge,
+            textAlign = TextAlign.Center,
+            modifier = if (date.compareTo(
+                LocalDate(
+                  java.time.LocalDate.now().year,
+                  java.time.LocalDate.now().month,
+                  java.time.LocalDate.now().dayOfMonth
+                )
+              ) == 0
+            ) Modifier
+              .size(36.dp)
+              .background(MaterialTheme.colors.background, shape = CircleShape) else Modifier
+          )
+          Spacer(modifier = Modifier.size(4.dp))
+          if (wishListState is WishState.Main) {
+            wishListState.wishList.forEach { item ->
+              if (item.recruitmentPeriod == date.toString()) {
+                Text(
+                  text = item.companyName,
+                  modifier = Modifier.background(MaterialTheme.colors.secondary),
+                  style = MaterialTheme.typography.labelSmall
+                )
+                Spacer(modifier = Modifier.size(6.dp))
+              }
             }
-        )
-        Spacer(modifier = Modifier.weight(1f))
-        Row {
-            Spacer(modifier = Modifier.weight(1f))
-            FloatingActionButton(
-                onClick = { isCalendar.value = false },
-                shape = CircleShape,
-                containerColor = MaterialTheme.colors.primary,
-                contentColor = MaterialTheme.colors.surface,
-                elevation = FloatingActionButtonDefaults.elevation(10.dp),
-                modifier = Modifier
-                    .size(70.dp),
-            ) {
-                Image(painter = painterResource(id = R.drawable.list), contentDescription = "리스트", modifier = Modifier.fillMaxSize(0.7f))
-            }
+          }
         }
+
+      },
+      headerContent = null,
+      onDayClick = { selectedDay, events ->
+        // Handle day click event
+      },
+      onRangeSelected = { selectedRange, events ->
+        // Handle range selection event
+      },
+      onErrorRangeSelected = { error ->
+        // Handle error
+      }
+    )
+  }
+  Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomEnd) {
+    FloatingActionButton(
+      onClick = { isCalendar.value = false },
+      shape = CircleShape,
+      containerColor = MaterialTheme.colors.primary,
+      contentColor = MaterialTheme.colors.surface,
+      elevation = FloatingActionButtonDefaults.elevation(10.dp),
+      modifier = Modifier
+        .size(70.dp)
+        .offset(x = (-10).dp, y = (-10).dp),
+    ) {
+      Image(
+        painter = painterResource(id = R.drawable.list),
+        contentDescription = "리스트",
+        modifier = Modifier.fillMaxSize(0.7f)
+      )
     }
+  }
 }
-
-
-
-
-
 
 
 @Preview
 @Composable
 fun ButtonPreview() {
-    WhaleTheme {
-        FloatingActionButton(
-            onClick = { /*TODO*/ },
-            shape = CircleShape,
-            containerColor = MaterialTheme.colors.primary,
-            contentColor = MaterialTheme.colors.surface,
-            elevation = FloatingActionButtonDefaults.elevation(10.dp),
-            modifier = Modifier
-                .size(70.dp),
-        ) {
-            Image(painter = painterResource(id = R.drawable.calendar), contentDescription = "달력",modifier = Modifier.fillMaxSize(0.5f))
-        }
+  WhaleTheme {
+    FloatingActionButton(
+      onClick = { /*TODO*/ },
+      shape = CircleShape,
+      containerColor = MaterialTheme.colors.primary,
+      contentColor = MaterialTheme.colors.surface,
+      elevation = FloatingActionButtonDefaults.elevation(10.dp),
+      modifier = Modifier
+        .size(70.dp),
+    ) {
+      Image(
+        painter = painterResource(id = R.drawable.calendar),
+        contentDescription = "달력",
+        modifier = Modifier.fillMaxSize(0.5f)
+      )
     }
+  }
 }

@@ -144,10 +144,11 @@ fun MyPageScreen() {
             IconButton(onClick = { viewModel.saveResume(resumeModel) }) {
               Icon(Icons.Rounded.Save, "Save Icon")
             }
+            Spacer(modifier = Modifier.padding(Padding.small))
           }
           UserInfoHeader(
             name = viewModel.userInfoModel.username,
-            description = "${resumeModel.major} 전공으로 연봉 ${resumeModel.preferIncome}정도의 ${resumeModel.workType}인 ${resumeModel.preferJob}을 희망합니다.",
+            description = if(resumeModel.major != "") "${resumeModel.major} 전공으로 연봉 ${resumeModel.preferIncome}정도의 ${resumeModel.workType}인 ${resumeModel.preferJob}을 희망합니다." else "이력서를 등록하시면 맞춤형 추천 공고를 확인하실 수 있습니다.",
             modifier = Modifier.padding(Padding.large)
           )
           Spacer(modifier = Modifier.height(Padding.xlarge))
@@ -158,7 +159,7 @@ fun MyPageScreen() {
             phoneNumber = "010 2630 4097",
             modifier = Modifier
               .background(Color.White)
-              .padding(Padding.large)
+              .padding(horizontal = Padding.extra, vertical = Padding.large)
           )
           Spacer(modifier = Modifier.height(Padding.small))
           UserInfoBodyListItem(
@@ -169,7 +170,7 @@ fun MyPageScreen() {
             onRemoveButtonClicked = { index -> viewModel.removePreferKeyword(resumeModel, index) },
             modifier = Modifier
               .background(Color.White)
-              .padding(Padding.large)
+              .padding(horizontal = Padding.extra, vertical = Padding.large)
           )
           Spacer(modifier = Modifier.height(Padding.small))
           UserInfoBodyListItem(
@@ -180,7 +181,7 @@ fun MyPageScreen() {
             onRemoveButtonClicked = { index -> viewModel.removeCertification(resumeModel, index) },
             modifier = Modifier
               .background(Color.White)
-              .padding(Padding.large)
+              .padding(horizontal = Padding.extra, vertical = Padding.large)
           )
           Spacer(modifier = Modifier.height(Padding.small))
           UserInfoBodyListItem(
@@ -197,7 +198,7 @@ fun MyPageScreen() {
             modifier = Modifier
               .clip(shape = RoundedCornerShape(bottomEnd = 12.dp, bottomStart = 12.dp))
               .background(Color.White)
-              .padding(Padding.large)
+              .padding(horizontal = Padding.extra, vertical = Padding.large)
           )
         }
       }

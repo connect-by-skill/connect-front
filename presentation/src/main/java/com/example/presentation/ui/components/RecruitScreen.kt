@@ -85,7 +85,8 @@ fun RecruitScreen() {
   NavHost(navController = navController, startDestination = "recruit") {
     composable("recruit") {
       Surface {
-        Column(modifier = Modifier.padding(10.dp)) {
+        Column(modifier = Modifier.padding(Padding.extra)
+        ) {
           if (!viewModel.isFilterOpen) when (recruitState) {
             is RecruitState.Main -> {
               val recruitList = (recruitState as RecruitState.Main).recruitList
@@ -110,7 +111,6 @@ fun RecruitScreen() {
             customTextFieldController = viewModel.searchTextFieldController,
             Icons.Rounded.Search
           )
-          Spacer(modifier = Modifier.height(24.dp))
           FlowRow(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
             viewModel.filterList.filter { viewModel.selectedFilterMap[it.toString()] ?: false }
               .forEach { it ->
