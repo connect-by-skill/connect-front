@@ -1,6 +1,7 @@
 package com.example.presentation.ui.components
 
 import android.content.Context
+import android.os.Build.VERSION.SDK_INT
 import android.os.Handler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -30,6 +31,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -39,6 +41,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import coil.ImageLoader
+import coil.compose.rememberAsyncImagePainter
+import coil.decode.GifDecoder
+import coil.decode.ImageDecoderDecoder
 import com.example.domain.model.state.LoginState
 import com.example.presentation.R
 import com.example.presentation.model.Screen
@@ -71,6 +77,16 @@ fun LoginScreen(
   var doubleClick: Boolean? = false
   var isLock by remember { mutableStateOf(!isSupported) }
 
+  val imageLoader = ImageLoader.Builder(LocalContext.current)
+    .components {
+      if (SDK_INT >= 28) {
+        add(ImageDecoderDecoder.Factory())
+      } else {
+        add(GifDecoder.Factory())
+      }
+    }
+    .build()
+
 
   LaunchedEffect(speechState) {
     coroutineScope.launch {
@@ -97,7 +113,7 @@ fun LoginScreen(
     ) {
       Image(
         modifier = Modifier
-          .fillMaxSize(0.6f)
+          .fillMaxWidth(0.35f)
           .clickable(enabled = !isLock) {
             if (doubleClick!!) {
               SpeechTool.isSupported = !SpeechTool.isSupported
@@ -121,7 +137,9 @@ fun LoginScreen(
           focusedBorderColor = MaterialTheme.colors.background
         ),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-        modifier = Modifier.padding(horizontal = 20.dp).fillMaxWidth()
+        modifier = Modifier
+          .padding(horizontal = 20.dp)
+          .fillMaxWidth()
       )
       Spacer(modifier = Modifier.size(12.dp))
       OutlinedTextField(
@@ -137,7 +155,9 @@ fun LoginScreen(
         },
         visualTransformation = PasswordVisualTransformation(),
         singleLine = true,
-        modifier = Modifier.padding(horizontal = 20.dp).fillMaxWidth()
+        modifier = Modifier
+          .padding(horizontal = 20.dp)
+          .fillMaxWidth()
       )
       Spacer(modifier = Modifier.size(20.dp))
       PrimaryButton(
@@ -185,7 +205,9 @@ fun LoginScreen(
             }
           }
         },
-        modifier = Modifier.padding(horizontal = 20.dp).fillMaxWidth(),
+        modifier = Modifier
+          .padding(horizontal = 20.dp)
+          .fillMaxWidth(),
         text = buttonText
       )
       UnderlinedButton(
@@ -197,7 +219,12 @@ fun LoginScreen(
           }
         }
       )
-      Spacer(modifier = Modifier.fillMaxHeight(0.1f))
+      Image(
+        painter = rememberAsyncImagePainter(model = R.drawable.whale_login, imageLoader),
+        contentDescription = null,
+        contentScale = ContentScale.FillWidth,
+        modifier = Modifier.fillMaxWidth()
+      )
     }
   }
 }
