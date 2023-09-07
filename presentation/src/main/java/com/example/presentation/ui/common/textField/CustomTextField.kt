@@ -5,10 +5,13 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -16,7 +19,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.presentation.theme.WhaleTheme
 import com.example.presentation.theme.colors
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -52,5 +57,19 @@ fun CustomTextField(
       ),
       contentPadding = PaddingValues(0.dp, 0.dp, 10.dp, 0.dp), // 패딩 삭제
     )
+  }
+}
+
+@Composable
+@Preview
+fun CustomTextFieldPreview() {
+  WhaleTheme {
+    Scaffold {
+      it
+      CustomTextField(
+        customTextFieldController = CustomTextFieldController(),
+        leadingIcon = Icons.Rounded.Search,
+      )
+    }
   }
 }

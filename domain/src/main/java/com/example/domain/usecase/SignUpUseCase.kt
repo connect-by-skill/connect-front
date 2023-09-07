@@ -17,11 +17,11 @@ class SignUpUseCase @Inject constructor(private val signUpRepository: SignUpRepo
         return pwRegex.matches(pw)
     }
 
-    fun requestCertificationNumber(email: String) {
+    suspend fun requestCertificationNumber(email: String) {
         signUpRepository.requestCertificationNumber(email)
     }
 
-    fun requestCertification(number: String) : Boolean{
+    suspend fun requestCertification(number: String) : Boolean{
         return signUpRepository.requestCertification(number)
     }
 

@@ -6,4 +6,6 @@ import com.example.data.model.SignUpRequest
 
 interface SignUpApi {
     suspend fun signUp(username: String, age: Int, email:String, encryptedPwd: String, addressInfo: String, addressDetails: String, disabilityType: String) : ApiResult<SignUpRequest>
+    suspend fun verifyEmail(email: String)
+    suspend fun checkCode(code: String) : Boolean
 }

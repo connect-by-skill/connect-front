@@ -8,16 +8,14 @@ import javax.inject.Inject
 
 class SignUpRepositoryImpl @Inject constructor(
     private val signUpApi: SignUpApi,
-    private val signUpMapper: SignUpMapper
+    private val signUpMapper: SignUpMapper,
 ) : SignUpRepository {
-    override fun requestCertificationNumber(email: String) {
-        println("인증 번호 요청")
-        //TODO("인증번호 요청하기")
+    override suspend fun requestCertificationNumber(email: String) {
+        signUpApi.verifyEmail(email = email)
     }
 
-    override fun requestCertification(number: String): Boolean {
-        return true
-        //TODO("인증 요청")
+    override suspend fun requestCertification(number: String): Boolean {
+        return signUpApi.checkCode(number)
     }
 
     override suspend fun signUp(
