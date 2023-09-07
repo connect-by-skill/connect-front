@@ -14,7 +14,6 @@ class CustomTextFieldController(
 
   fun onTextChange(value: String, callback: () -> Unit = onTextChangeCallback) {
     text = value
-    println("CustomTexField : $text, $value")
     callback()
   }
 

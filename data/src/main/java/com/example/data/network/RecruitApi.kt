@@ -5,7 +5,13 @@ import com.example.data.model.CompanyResponse
 import okhttp3.ResponseBody
 
 interface RecruitApi {
-  suspend fun addWishList(jobAnnouncementId: Int) : ApiResult<ResponseBody>
-  suspend fun deleteWishList(jobAnnouncementId: Int) : ApiResult<ResponseBody>
-  suspend fun getRecruitList(page: Int, sort: String): ApiResult<List<CompanyResponse>>
+  suspend fun addWishList(jobAnnouncementId: Int): ApiResult<ResponseBody>
+  suspend fun deleteWishList(jobAnnouncementId: Int): ApiResult<ResponseBody>
+  suspend fun getRecruitList(
+    experienceTagType: String?,
+    companyTagType: String?,
+    employmentTagType: String?,
+    addressTagType: String?,
+    keyword: String, page: Int, sort: String,
+  ): ApiResult<List<CompanyResponse>>
 }

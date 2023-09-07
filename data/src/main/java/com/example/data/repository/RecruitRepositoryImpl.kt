@@ -11,8 +11,25 @@ class RecruitRepositoryImpl @Inject constructor(
   private val recruitApi: RecruitApi,
   private val recruitMapper: RecruitMapper
 ) : RecruitRepository {
-  override suspend fun getRecruitList(page: Int, sort: String): EntityWrapper<List<CompanyModel>> {
-    return recruitMapper.mapFromResult(result = recruitApi.getRecruitList(page, sort))
+  override suspend fun getRecruitList(
+    experienceTagType: String?,
+    companyTagType: String?,
+    employmentTagType: String?,
+    addressTagType: String?,
+    keyword: String, page: Int, sort: String,
+  ): EntityWrapper<List<CompanyModel>> {
+    val result = recruitApi.getRecruitList(
+      experienceTagType,
+      companyTagType,
+      employmentTagType,
+      addressTagType,
+      keyword,
+      page,
+      sort
+    )
+    return recruitMapper.mapFromResult(
+      result = result
+    )
   }
 
   override suspend fun addWishList(jobAnnouncementId: Int): Int {

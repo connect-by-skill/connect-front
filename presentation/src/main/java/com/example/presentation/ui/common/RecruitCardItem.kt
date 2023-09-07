@@ -44,7 +44,7 @@ fun RecruitCardItem(
   Card(
     modifier = Modifier
         .width(145.dp)
-        .height(190.dp)
+        .height(200.dp)
         .clickable { onClick() },
     elevation = CardDefaults.cardElevation(5.dp),
   ) {

@@ -17,7 +17,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ExpandLess
-import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
@@ -43,10 +42,14 @@ import androidx.navigation.compose.rememberNavController
 import com.example.domain.model.CompanyModel
 import com.example.domain.model.RecruitModel
 import com.example.domain.model.state.RecruitState
+import com.example.presentation.model.AddressTagType
+import com.example.presentation.model.CompanyTagType
+import com.example.presentation.model.EmploymentTagType
+import com.example.presentation.model.ExperienceTagType
+import com.example.presentation.model.TagType
 import com.example.presentation.theme.Padding
 import com.example.presentation.theme.colors
 import com.example.presentation.ui.common.TagItem
-import com.example.presentation.ui.common.textField.CustomTextField
 import com.example.presentation.ui.components.recruit.DetailScreen
 import com.example.presentation.ui.components.recruit.RecruitHeader
 import com.example.presentation.ui.components.recruit.RecruitListItem
@@ -85,7 +88,8 @@ fun RecruitScreen() {
   NavHost(navController = navController, startDestination = "recruit") {
     composable("recruit") {
       Surface {
-        Column(modifier = Modifier.padding(Padding.extra)
+        Column(
+          modifier = Modifier.padding(Padding.extra)
         ) {
           if (!viewModel.isFilterOpen) when (recruitState) {
             is RecruitState.Main -> {
@@ -94,6 +98,7 @@ fun RecruitScreen() {
                 recruitList.size,
                 viewModel.sortDropdownMenuController,
                 viewModel.filterDropdownMenuController,
+                viewModel.searchTextFieldController,
                 { viewModel.refreshRecruitList(viewModel.sortDropdownMenuController.currentValue.toQueryString()) }
               )
             }
@@ -103,26 +108,13 @@ fun RecruitScreen() {
                 0,//recruitList.size,
                 viewModel.sortDropdownMenuController,
                 viewModel.filterDropdownMenuController,
-                viewModel::refreshRecruitList
+                viewModel.searchTextFieldController,
+                viewModel::refreshRecruitList,
               )
             }
           }
-          if (viewModel.isFilterOpen) CustomTextField(
-            customTextFieldController = viewModel.searchTextFieldController,
-            Icons.Rounded.Search
-          )
-          FlowRow(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
-            viewModel.filterList.filter { viewModel.selectedFilterMap[it.toString()] ?: false }
-              .forEach { it ->
-                TagItem(
-                  backgroundColor = MaterialTheme.colors.background,
-                  tag = it.toString(),
-                  modifier = Modifier.padding(Padding.small),
-                  onClick = { viewModel.updateIsFilterSelect(it.toString()) }
-                )
-              }
-          }
-          Spacer(modifier = Modifier.height(Padding.xlarge))
+
+          Spacer(modifier = Modifier.height(6.dp))
           if (viewModel.isFilterOpen) Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -132,8 +124,15 @@ fun RecruitScreen() {
               horizontalArrangement = Arrangement.Center,
               modifier = Modifier.fillMaxWidth()
             ) {
-              viewModel.filterList.forEach { it ->
-                if (viewModel.selectedFilterMap[it.toString()] == false)
+              viewModel.filterList.forEach {
+                val isSelected = when (it.getMajorType()) {
+                  ExperienceTagType::class.java -> viewModel.experienceTagType == it
+                  CompanyTagType::class.java -> viewModel.companyTagType == it
+                  EmploymentTagType::class.java -> viewModel.employmentTagType == it
+                  AddressTagType::class.java -> viewModel.addressTagType == it
+                  else -> false
+                }
+                if (isSelected)
                   TagItem(
                     backgroundColor = MaterialTheme.colors.surface,
                     borderColor = MaterialTheme.colors.background,
@@ -156,6 +155,25 @@ fun RecruitScreen() {
               )
             }
           }
+
+          FlowRow(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
+            listOfNotNull(
+              viewModel.experienceTagType,
+              viewModel.companyTagType,
+              viewModel.employmentTagType,
+              viewModel.addressTagType
+            ).forEach { it ->
+              TagItem(
+                backgroundColor = MaterialTheme.colors.background,
+                tag = it.toString(),
+                modifier = Modifier.padding(Padding.small),
+                onClick = { viewModel.updateIsFilterSelect(it.toString()) }
+              )
+            }
+          }
+
+          Spacer(modifier = Modifier.height(Padding.medium))
+
           when (recruitState) {
             is RecruitState.Loading -> {
               Box(

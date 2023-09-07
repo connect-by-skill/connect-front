@@ -31,7 +31,6 @@ fun CustomTextField(
   leadingIcon: ImageVector,
   modifier: Modifier = Modifier
 ) {
-  println("CustomTexField : $customTextFieldController")
   BasicTextField(
     value = customTextFieldController.text,
     onValueChange = customTextFieldController::onTextChange,

@@ -13,28 +13,45 @@ import javax.inject.Inject
 
 class RecruitDataSource @Inject constructor(
   private val networkRequestFactory: NetworkRequestFactory
-): RecruitApi {
-  override suspend fun getRecruitList(page: Int, sort: String): ApiResult<List<CompanyResponse>> {
+) : RecruitApi {
+  override suspend fun getRecruitList(
+    experienceTagType: String?,
+    companyTagType: String?,
+    employmentTagType: String?,
+    addressTagType: String?,
+    keyword: String, page: Int, sort: String,
+  ): ApiResult<List<CompanyResponse>> {
     return networkRequestFactory.create(
-      url = "announcement?page=${page}&size=10&sort=id,$sort",
-      type = object : TypeToken<List<CompanyResponse>>(){}.type,
-      requestInfo = NetworkRequestInfo.Builder(RequestType.GET).withHeaders(mapOf("Authorization" to "Bearer ${LoginTokenData.atk}")).build()
+      url = "announcement/search?" +
+          (if(experienceTagType != null) "requiredExperienceExists=${experienceTagType=="경력"}&" else "") +
+          (if(companyTagType != null) "companyType=${companyTagType}&" else "") +
+          (if(employmentTagType != null) "typeOfEmployment=${employmentTagType}&" else "") +
+          (if(addressTagType != null) "businessAddress=${addressTagType}&" else "") +
+          "keyword=${keyword}&"+
+          "page=${page}&" +
+          "size=10&" +
+          "sort=id,$sort",
+      type = object : TypeToken<List<CompanyResponse>>() {}.type,
+      requestInfo = NetworkRequestInfo.Builder(RequestType.GET)
+        .withHeaders(mapOf("Authorization" to "Bearer ${LoginTokenData.atk}")).build()
     )
   }
 
   override suspend fun addWishList(jobAnnouncementId: Int): ApiResult<ResponseBody> {
     return networkRequestFactory.create(
       url = "announcement/wish?jobAnnoucemnetId=${jobAnnouncementId}",
-      type = object: TypeToken<ResponseBody>(){}.type,
-      requestInfo = NetworkRequestInfo.Builder(RequestType.POST).withHeaders(mapOf("Authorization" to "Bearer ${LoginTokenData.atk}")).build()
+      type = object : TypeToken<ResponseBody>() {}.type,
+      requestInfo = NetworkRequestInfo.Builder(RequestType.POST)
+        .withHeaders(mapOf("Authorization" to "Bearer ${LoginTokenData.atk}")).build()
     )
   }
 
   override suspend fun deleteWishList(jobAnnouncementId: Int): ApiResult<ResponseBody> {
     return networkRequestFactory.create(
       url = "announcement/wish?jobAnnoucemnetId=${jobAnnouncementId}",
-      type = object: TypeToken<ResponseBody>(){}.type,
-      requestInfo = NetworkRequestInfo.Builder(RequestType.DELETE).withHeaders(mapOf("Authorization" to "Bearer ${LoginTokenData.atk}")).build()
+      type = object : TypeToken<ResponseBody>() {}.type,
+      requestInfo = NetworkRequestInfo.Builder(RequestType.DELETE)
+        .withHeaders(mapOf("Authorization" to "Bearer ${LoginTokenData.atk}")).build()
     )
   }
 }

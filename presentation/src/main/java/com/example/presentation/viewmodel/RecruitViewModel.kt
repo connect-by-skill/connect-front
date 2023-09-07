@@ -13,6 +13,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import com.example.domain.model.CompanyModel
 import com.example.domain.model.state.RecruitState
 import com.example.domain.usecase.RecruitUseCase
+import com.example.presentation.model.AddressTagType
+import com.example.presentation.model.CompanyTagType
+import com.example.presentation.model.EmploymentTagType
+import com.example.presentation.model.ExperienceTagType
 import com.example.presentation.model.SortType
 import com.example.presentation.model.TagType
 import com.example.presentation.ui.common.dropdown.CustomDropdownMenuController
@@ -39,20 +43,19 @@ class RecruitViewModel @Inject constructor(private val recruitUseCase: RecruitUs
   private val _filterList = mutableStateListOf<TagType>()
   val filterList: List<TagType> = _filterList
 
-  private val _selectedFilterMap = mutableStateMapOf<String, Boolean>()
-  val selectedFilterMap: Map<String, Boolean> = _selectedFilterMap
+  var experienceTagType by mutableStateOf<TagType?>(null)
+  var companyTagType by mutableStateOf<TagType?>(null)
+  var employmentTagType by mutableStateOf<TagType?>(null)
+  var addressTagType by mutableStateOf<TagType?>(null)
 
-  val searchTextFieldController: CustomTextFieldController =
-    CustomTextFieldController(::updateFilterList)
+  val searchTextFieldController: CustomTextFieldController = CustomTextFieldController()
+  // TODO : Search 시 controller.text 추가
 
   var isFilterOpen: Boolean by mutableStateOf(false)
 
   init {
     refreshRecruitList()
-    updateFilterList()
-    _filterList.map {
-      _selectedFilterMap[it.toString()] = false
-    }
+    _filterList.addAll(TagType.values())
   }
 
   fun init(navController: NavHostController) {
@@ -63,14 +66,34 @@ class RecruitViewModel @Inject constructor(private val recruitUseCase: RecruitUs
     page = 0
     viewModelScope.launch {
       _isRefreshing.value = true
-      addRecruitList(recruitUseCase.getRecruitList(page = page++, sort = sort))
+      addRecruitList(
+        recruitUseCase.getRecruitList(
+          experienceTagType?.toString(),
+          companyTagType?.toString(),
+          employmentTagType?.toString(),
+          addressTagType?.toString(),
+          searchTextFieldController.text,
+          page++,
+          sort
+        )
+      )
       _isRefreshing.value = false
     }
   }
 
   fun getRecruitList(sort: String = "desc") {
     viewModelScope.launch {
-      addRecruitList(recruitUseCase.getRecruitList(page = page++, sort = sort))
+      addRecruitList(
+        recruitUseCase.getRecruitList(
+          experienceTagType?.toString(),
+          companyTagType?.toString(),
+          employmentTagType?.toString(),
+          addressTagType?.toString(),
+          searchTextFieldController.text,
+          page++,
+          sort
+        )
+      )
     }
   }
 
@@ -129,15 +152,21 @@ class RecruitViewModel @Inject constructor(private val recruitUseCase: RecruitUs
     _recruitState.value = RecruitState.Loading
   }
 
-  private fun updateFilterList() {
-    _filterList.clear()
-    _filterList.addAll(TagType.values().filter {
-      it.toString().contains(searchTextFieldController.text)
-    })
-  }
-
   fun updateIsFilterSelect(value: String) {
-    _selectedFilterMap[value] = !(_selectedFilterMap[value] ?: true)
+    val current = TagType.fromString(value)
+    when (current.getMajorType()) {
+      ExperienceTagType::class.java -> experienceTagType =
+        if (experienceTagType == current) null else current
+
+      CompanyTagType::class.java -> companyTagType =
+        if (companyTagType == current) null else current
+
+      EmploymentTagType::class.java -> employmentTagType =
+        if (employmentTagType == current) null else current
+
+      AddressTagType::class.java -> addressTagType =
+        if (addressTagType == current) null else current
+    }
   }
 
   fun setIsFilterOpen() {
