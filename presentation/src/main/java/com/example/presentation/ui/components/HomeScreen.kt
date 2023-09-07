@@ -57,6 +57,7 @@ import com.example.domain.model.UserInfo
 import com.example.domain.model.state.RankState
 import com.example.domain.model.state.UserState
 import com.example.domain.model.state.WishState
+import com.example.presentation.R
 import com.example.presentation.model.MainMenu
 import com.example.presentation.theme.Padding
 import com.example.presentation.theme.colors
@@ -197,7 +198,9 @@ fun HomeScreen(navController: NavHostController) {
                         value = item
                       )
                       homeNavController.navigate("detail")
-                    })
+                    },
+                    image = if (item.id % 3 == 0) R.drawable.company_gray else if (item.id % 3 == 1) R.drawable.company_black else R.drawable.company_white
+                  )
                 }
               }
 

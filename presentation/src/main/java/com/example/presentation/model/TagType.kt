@@ -10,9 +10,6 @@ enum class TagType {
   EXPERIENCED {
     override fun toString(): String = "경력"
   },
-  SALARY {
-    override fun toString(): String = "연봉"
-  },
   LARGE_COMPANY {
     override fun toString(): String = "대기업"
   },
@@ -34,23 +31,11 @@ enum class TagType {
   INDIVIDUAL {
     override fun toString(): String = "개인"
   },
-  FOREIGN_COMPANY {
-    override fun toString(): String = "외국계"
-  },
   CONTRACT_EMPLOYEE {
     override fun toString(): String = "계약직"
   },
   REGULAR_EMPLOYEE {
     override fun toString(): String = "상용직"
-  },
-  SAFE_WORKPLACE {
-    override fun toString(): String = "안전사업장"
-  },
-  BARRIER_FREE {
-    override fun toString(): String = "배리어프리"
-  },
-  HEALTH_CENTER {
-    override fun toString(): String = "건강센터"
   },
   SEOUL {
     override fun toString(): String = "서울"

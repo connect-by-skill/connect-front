@@ -1,9 +1,11 @@
 package com.example.presentation.ui.components.recruit
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -27,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -41,6 +44,7 @@ import com.example.presentation.theme.Shapes
 import com.example.presentation.theme.WhaleTheme
 import com.example.presentation.theme.colors
 import com.example.presentation.ui.common.TagItem
+import kotlin.random.Random
 
 @Composable
 fun RecruitListItem(
@@ -71,18 +75,11 @@ fun RecruitListItem(
           .width(100.dp)
           .height(100.dp),
       ) {
-        // TODO : Image 추가 필요
         Box {
-//          Image(painter = painterResource(id = R.drawable.basic_calendar), contentDescription = "달력",modifier = Modifier.fillMaxSize(1f), colorFilter = ColorFilter.tint(MaterialTheme.colors.primary))
-          Text(
-            text = "${recruitModel.dDay}",
-            textAlign = TextAlign.Center,
-            modifier = modifier
-              .width(100.dp)
-              .height(100.dp)
-              .wrapContentHeight(align = Alignment.CenterVertically),
-            style = MaterialTheme.typography.bodyLarge,
-            fontSize = 27.sp
+          Image(
+            painter = painterResource(id = if(recruitModel.id % 3 == 0) R.drawable.company_gray else if(recruitModel.id % 3 == 1) R.drawable.company_black else R.drawable.company_white),
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(1f),
           )
         }
       }

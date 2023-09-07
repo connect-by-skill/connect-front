@@ -1,5 +1,6 @@
 package com.example.presentation.ui.components.recruit
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -24,6 +26,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -47,16 +52,14 @@ fun DetailHeader(recruitModel: RecruitModel, onWishChange: () -> Unit) {
     verticalAlignment = Alignment.Top,
     horizontalArrangement = Arrangement.spacedBy(Padding.medium),
   ) {
-    Card(
-      shape = Shapes.large,
-      elevation = CardDefaults.cardElevation(),
-      colors = CardDefaults.cardColors(MaterialTheme.colors.surface),
+    Image(
       modifier = Modifier
-        .width(100.dp)
-        .height(100.dp),
-    ) {
-      // TODO : Image 추가 필요
-    }
+        .clip(Shapes.large)
+        .size(100.dp).background(Color.White),
+      contentScale = ContentScale.FillWidth,
+      contentDescription = null,
+      painter = painterResource(id = if(recruitModel.id % 3 == 0) R.drawable.company_gray else if(recruitModel.id % 3 == 1) R.drawable.company_black else R.drawable.company_white),
+    )
     Column(
       modifier = Modifier
         .height(100.dp)
